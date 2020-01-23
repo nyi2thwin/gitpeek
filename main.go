@@ -1,15 +1,12 @@
 package main
 
 import (
+	utils "./utils"
 	"flag"
 	"fmt"
 	"github.com/nyi2thwin/color"
 	"github.com/nyi2thwin/resize"
 	"image"
-	"image/jpeg"
-	"image/png"
-	"io"
-	"net/http"
 	"os"
 )
 
@@ -18,37 +15,18 @@ var widthPtr = flag.Uint("w", 44, "width of the image")
 
 func main() {
 	flag.Parse()
-	url := fmt.Sprintf("https://github.com/%s.png", *namePtr)
 
-	// You can register another format here
-	image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
-	image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
+	img, getAvatarError := utils.GetAvatarImg(*namePtr)
 
-	// Just a simple GET request to the image URL
-	res, err := http.Get(url)
+	processImg(img)
 
-	if err != nil {
-		fmt.Println("http error %v", err)
-	}
-
-	decodeErr := decodeAndProcess(res.Body)
-
-	// close the res
-	res.Body.Close()
-
-	if decodeErr != nil {
-		fmt.Println("Avatar not found!")
+	if getAvatarError != nil {
+		fmt.Println("Avatar not found or fail to get Avatar.")
 		os.Exit(1)
 	}
 }
 
-func decodeAndProcess(file io.Reader) error {
-	img, _, err := image.Decode(file)
-
-	if err != nil {
-		return err
-	}
-
+func processImg(img image.Image) {
 	// resize the image to fit in command line
 	resizedImg := resize.Resize(*widthPtr, 0, img, resize.Lanczos3)
 
@@ -61,8 +39,6 @@ func decodeAndProcess(file io.Reader) error {
 		}
 		fmt.Println("")
 	}
-
-	return nil
 }
 
 func printPixel(r uint32, g uint32, b uint32, a uint32) {
