@@ -61,8 +61,8 @@ func printPixel(r uint32, g uint32, b uint32, a uint32) {
 	coloredChar := color.RGB(red, green, blue)
 	backgroundChar := color.RGB(255, 255, 255)
 	if alpha != 0 {
-		coloredChar.Print("8")
+		coloredChar.Print("01")
 	} else {
-		backgroundChar.Print(".")
+		backgroundChar.Print("  ")
 	}
 }
