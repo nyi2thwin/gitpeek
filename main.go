@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/nyi2thwin/color"
+	"github.com/nyi2thwin/resize"
 	"image"
 	"image/png"
 	"io"
@@ -33,18 +34,19 @@ func main() {
 func decodeAndProcess(file io.Reader) error {
 	img, _, err := image.Decode(file)
 
-	grayImg := image.NewGray(img.Bounds())
-
 	if err != nil {
 		return err
 	}
 
-	bounds := grayImg.Bounds()
+	// resize the image to fit in command line
+	resizedImg := resize.Resize(60, 0, img, resize.Lanczos3)
+
+	bounds := resizedImg.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
-			printPixel(img.At(x, y).RGBA())
+			printPixel(resizedImg.At(x, y).RGBA())
 		}
 		fmt.Println("")
 	}
@@ -52,7 +54,6 @@ func decodeAndProcess(file io.Reader) error {
 	return nil
 }
 
-// img.At(x, y).RGBA() returns four uint32 values; we want a Pixel
 func printPixel(r uint32, g uint32, b uint32, a uint32) {
 	red := uint8(r / 257)
 	green := uint8(g / 257)
@@ -61,8 +62,8 @@ func printPixel(r uint32, g uint32, b uint32, a uint32) {
 	coloredChar := color.RGB(red, green, blue)
 	backgroundChar := color.RGB(255, 255, 255)
 	if alpha != 0 {
-		coloredChar.Print("8")
+		coloredChar.Print("01")
 	} else {
-		backgroundChar.Print(".")
+		backgroundChar.Print("  ")
 	}
 }
