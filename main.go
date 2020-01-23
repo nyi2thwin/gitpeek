@@ -34,7 +34,7 @@ func main() {
 	res.Body.Close()
 
 	if decodeErr != nil {
-		fmt.Println("Error: Image could not be decoded")
+		fmt.Println("Avatar not found!")
 		os.Exit(1)
 	}
 }
