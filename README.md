@@ -5,6 +5,7 @@ Peek git profile from command line
 ./gitpeek -u=nyi2thwin -w=50\
 -u for username\
 -w for width of the display\
+![Image description](https://github.com/nyi2thwin/gitpeek/blob/master/sample.png?raw=true)
 
 # Acknowledgements
 
