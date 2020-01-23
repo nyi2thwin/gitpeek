@@ -1,32 +1,43 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/nyi2thwin/color"
 	"github.com/nyi2thwin/resize"
 	"image"
+	"image/jpeg"
 	"image/png"
 	"io"
+	"net/http"
 	"os"
 )
 
+var namePtr = flag.String("u", "nyi2thwin", "github username")
+var widthPtr = flag.Uint("w", 44, "width of the image")
+
 func main() {
+	flag.Parse()
+	url := fmt.Sprintf("https://github.com/%s.png", *namePtr)
+
 	// You can register another format here
 	image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
+	image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
 
-	file, err := os.Open("./test.png")
+	// Just a simple GET request to the image URL
+	res, err := http.Get(url)
 
 	if err != nil {
-		fmt.Println("Error: File could not be opened")
-		os.Exit(1)
+		fmt.Println("http error %v", err)
 	}
 
-	defer file.Close()
+	decodeErr := decodeAndProcess(res.Body)
 
-	decodeErr := decodeAndProcess(file)
+	// close the res
+	res.Body.Close()
 
 	if decodeErr != nil {
-		fmt.Println("Error: Image could not be decoded")
+		fmt.Println("Avatar not found!")
 		os.Exit(1)
 	}
 }
@@ -39,7 +50,7 @@ func decodeAndProcess(file io.Reader) error {
 	}
 
 	// resize the image to fit in command line
-	resizedImg := resize.Resize(60, 0, img, resize.Lanczos3)
+	resizedImg := resize.Resize(*widthPtr, 0, img, resize.Lanczos3)
 
 	bounds := resizedImg.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
