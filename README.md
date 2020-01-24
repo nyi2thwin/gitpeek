@@ -11,7 +11,7 @@ Peek git profile from command line
 
 go get https://github.com/nyi2thwin/color \
 go get https://github.com/nyi2thwin/resize \
-go build \
+go build 
 
 Note* I forked those two libraries so that this script will always works even when those libraries were changed or updated.
 
