@@ -19,3 +19,5 @@ Note* I forked those two libraries so that this script will always works even wh
 
 Thanks to https://github.com/gookit/color for making it easier to print colored character in command line.\
 Thanks to https://github.com/nfnt/resize for easy image reizing
+
+
